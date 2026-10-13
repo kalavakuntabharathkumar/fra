@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql://fraud:fraud_dev_only@postgres:5432/frauddb
+      MODEL_PATH: /app/models/fraud_model.joblib
+    volumes: ["model_data:/app/models"]
+    depends_on: [redis, postgres]
+  redis:
+    image: redis:7-alpine
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fraud
+      POSTGRES_PASSWORD: fraud_dev_only
+      POSTGRES_DB: frauddb
+    ports: ["5432:5432"]
+    volumes: ["pg_data:/var/lib/postgresql/data"]
+volumes:
+  model_data:
+  pg_data:
